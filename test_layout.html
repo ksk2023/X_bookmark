@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+.heatmapLayout { display: flex; flex-direction: row; gap: 16px; align-items: stretch; border: 2px solid blue; }
+.trendPanel { display: flex; flex-direction: column; gap: 4px; flex: 0 0 320px; border: 2px solid red; }
+.trendChartWrap svg { width: 100%; height: 160px; display: block; }
+.heatmapMain { flex: 1 1 auto; min-width: 0; min-height: 180px; border: 2px solid green; }
+.heatCell { width: 14px; height: 14px; display: inline-block; background: #ebedf0; }
+.heatCell.l1 { background: #ffb3ba; }
+.heatCell.l2 { background: #ff6b6b; }
+.heatCell.l3 { background: #e63946; }
+.heatCell.l4 { background: #a4161a; }
+.heatWeek { display: flex; flex-direction: column; gap: 3px; }
+.heatmapGrid { display: flex; flex-direction: row; gap: 3px; }
+</style></head><body>
+<div class="heatmapLayout">
+  <div class="heatmapMain">
+    <b>Heatmap (left)</b>
+    <div class="heatmapGrid" id="hg"></div>
+  </div>
+  <div class="trendPanel">
+    <b>Trend (right)</b>
+    <div class="trendChartWrap"><svg id="ts" viewBox="0 0 320 140" preserveAspectRatio="xMidYMid meet"></svg></div>
+  </div>
+</div>
+<script>
+var hg = document.getElementById('hg');
+for (var w = 0; w < 20; w++) {
+  var week = document.createElement('div'); week.className = 'heatWeek';
+  for (var d = 0; d < 7; d++) {
+    var cell = document.createElement('i'); cell.className = 'heatCell l' + Math.floor(Math.random()*5);
+    week.appendChild(cell);
+  }
+  hg.appendChild(week);
+}
+var ts = document.getElementById('ts');
+var ns = 'http://www.w3.org/2000/svg';
+var path = document.createElementNS(ns, 'path');
+path.setAttribute('d', 'M10,100 L40,60 L70,80 L100,30 L130,50 L160,20 L190,70 L220,40 L250,90 L280,50 L310,30');
+path.setAttribute('fill', 'none'); path.setAttribute('stroke', '#e63946'); path.setAttribute('stroke-width', '2');
+ts.appendChild(path);
+</script>
+</body></html>

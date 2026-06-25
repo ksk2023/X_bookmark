@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>X Bookmark Organizer · 管理</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <aside class="side">
+    <div class="brand">
+      <span class="logo">✦</span>
+      <div>
+        <div class="title">X 书签整理</div>
+        <div class="sub" id="syncAt">未同步</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="navSection">书签</div>
+      <a class="navItem" data-view="all" href="#">
+        <span class="dot" style="background:#e63946"></span><span class="lbl">全部</span><span class="ct" id="ctAll">0</span>
+      </a>
+      <a class="navItem" data-view="uncategorized" href="#">
+        <span class="dot" style="background:#5b7083"></span><span class="lbl">未分类</span><span class="ct" id="ctUncat">0</span>
+      </a>
+      <a class="navItem" data-view="removed" href="#">
+        <span class="dot" style="background:#ef4444"></span><span class="lbl">已忽略</span><span class="ct" id="ctRem">0</span>
+      </a>
+    </nav>
+
+    <nav class="nav">
+      <div class="navSection">浏览</div>
+      <a class="navItem" data-view="history" href="#">
+        <span class="dot" style="background:#f7b928"></span><span class="lbl">浏览记录</span><span class="ct" id="ctHistory">0</span>
+      </a>
+      <a class="navItem" data-view="authors" href="#">
+        <span class="dot" style="background:#10b981"></span><span class="lbl">关注博主</span><span class="ct" id="ctAuthors">·</span>
+      </a>
+    </nav>
+
+    <nav class="nav">
+      <div class="navSection">
+        <span>分类</span>
+        <button id="newCat" class="newCatBtn" title="新建分类">＋ 新建分类</button>
+      </div>
+      <div id="catNav"></div>
+    </nav>
+
+    <nav class="nav">
+      <div class="navSection">AI</div>
+      <a class="navItem" data-view="ai-pending" href="#">
+        <span class="dot" style="background:#8b5cf6"></span><span class="lbl">AI 提议待审</span><span class="ct" id="ctPending">0</span>
+      </a>
+      <a class="navItem" data-view="ai-settings" href="#">
+        <span class="dot" style="background:#3b82f6"></span><span class="lbl">AI 设置</span><span class="ct">·</span>
+      </a>
+    </nav>
+
+    <div class="foot">
+      <button id="exportBtn" class="ghost small">导出 JSON</button>
+      <button id="importBtn" class="ghost small">导入 JSON</button>
+      <input type="file" id="importFile" accept="application/json" hidden />
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="bar">
+      <div class="left">
+        <h2 id="viewTitle">全部</h2>
+        <span class="muted" id="viewCount"></span>
+      </div>
+      <div class="right">
+        <input id="search" type="search" placeholder="搜索正文/作者/笔记" />
+        <button id="fullSync" class="primary">完整同步全部书签</button>
+        <button id="stopSync" class="hidden">停止同步</button>
+        <button id="scanNow">扫描当前可见页</button>
+        <button id="aiRun">✨ AI 整理未分类</button>
+      </div>
+    </header>
+
+      <div class="dashWrap" id="dashWrap">
+        <aside class="dashSide" id="dashSide">
+          <div class="dashSideHead">
+            <b>关注博主</b>
+            <span class="muted small" id="dashAuthorCount"></span>
+            <button id="dashAuthorToggle" class="ghost smallBtn" type="button" title="收起/展开博主栏">收起</button>
+          </div>
+          <div class="dashAuthorList" id="dashAuthorList"></div>
+        </aside>
+
+        <section class="dashMain" id="dashMain">
+
+        <section class="timePanel" id="timePanel">
+          <div class="timeControls">
+            <label>时间依据
+              <select id="timeSource">
+                <option value="tweet" selected>推文发布时间</option>
+                <option value="captured">收藏记录时间（本地入库）</option>
+              </select>
+            </label>
+            <label>时间范围
+              <select id="timeMode">
+                <option value="all">全部记录</option>
+                <option value="year">筛选某年</option>
+                <option value="half">筛选半年</option>
+                <option value="month">筛选某月</option>
+                <option value="day">筛选某日</option>
+                <option value="range">自定义范围</option>
+              </select>
+            </label>
+            <label>展示粒度
+              <select id="timeGroup">
+                <option value="auto">自动</option>
+                <option value="year">按年</option>
+                <option value="half">按半年</option>
+                <option value="biweek">按半月</option>
+                <option value="month">按月</option>
+                <option value="week">按周</option>
+                <option value="day">按日</option>
+              </select>
+            </label>
+            <label class="timeInputGroup hidden" data-time-mode="year">年份
+              <input id="timeYear" type="number" min="2006" max="2100" placeholder="2026" />
+            </label>
+            <label class="timeInputGroup hidden" data-time-mode="half">半年
+              <input id="timeHalfYear" type="number" min="2006" max="2100" placeholder="2026" />
+              <select id="timeHalfPart">
+                <option value="1">上半年</option>
+                <option value="2">下半年</option>
+              </select>
+            </label>
+            <label class="timeInputGroup hidden" data-time-mode="month">月份
+              <input id="timeMonth" type="month" />
+            </label>
+            <label class="timeInputGroup hidden" data-time-mode="day">日期
+              <input id="timeDay" type="date" />
+            </label>
+            <label class="timeInputGroup hidden" data-time-mode="range">从
+              <input id="timeFrom" type="date" />
+            </label>
+            <label class="timeInputGroup hidden" data-time-mode="range">到
+              <input id="timeTo" type="date" />
+            </label>
+            <button id="timeClear" class="ghost">清除时间筛选</button>
+            <span class="muted small" id="timeSummary"></span>
+          </div>
+          <div class="muted small timeHint" id="timeSourceHint"></div>
+          <div class="timeViz">
+            <div class="heatmapTop">
+              <b id="heatmapTitle">收藏热力图</b>
+              <div class="heatmapActions">
+                <span class="muted small">颜色越深表示该时间段记录越多，点击查看</span>
+                <div class="heatYearNav">
+                  <button id="heatYearPrev" class="ghost smallBtn" type="button" title="上一年">&laquo;</button>
+                  <b id="heatYearLabel">2026</b>
+                  <button id="heatYearNext" class="ghost smallBtn" type="button" title="下一年">&raquo;</button>
+                </div>
+                <button id="timeVizToggle" class="ghost smallBtn" type="button">收起统计</button>
+              </div>
+            </div>
+           <div class="timeFocusLine muted small" id="timeFocusLine"></div>
+           <div class="heatmapStats" id="heatmapStats"></div>
+           <div class="bucketTitle" id="timeBucketTitle"></div>
+           <div class="heatmapLayout">
+              <div class="heatmapMain">
+                <div class="heatmapBody">
+                  <div class="heatmapWeekdays" id="heatmapWeekdays"></div>
+                  <div class="heatmapScroll">
+                    <div class="heatmapMonths" id="heatmapMonths"></div>
+                    <div class="heatmapGrid" id="heatmapGrid"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="trendPanel">
+                <div class="trendHeader"><b id="trendTitle">时间趋势图</b><span class="muted small" id="trendPeak"></span></div>
+                <div class="trendChartWrap"><svg id="trendSvg"></svg></div>
+              </div>
+            </div>
+            <div class="heatLegend">
+              <span>少</span>
+              <i class="heatCell l0"></i>
+              <i class="heatCell l1"></i>
+              <i class="heatCell l2"></i>
+              <i class="heatCell l3"></i>
+              <i class="heatCell l4"></i>
+              <span>多</span>
+            </div>
+            <div class="timeBuckets" id="timeBuckets"></div>
+          </div>
+        </section>
+
+        <section class="toolbar hidden" id="batchBar">
+          <span><b id="selCount">0</b> 已选</span>
+          <label>→ 分类
+            <select id="batchCat"></select>
+          </label>
+          <button id="batchApply" class="primary">应用</button>
+          <button id="batchIgnore">忽略</button>
+          <button id="batchDelete" class="danger">删除</button>
+          <button id="batchClear" class="ghost">取消</button>
+        </section>
+
+        <section class="list" id="list"></section>
+
+        <section class="empty hidden" id="empty">
+          <div class="big">🗂</div>
+          <h3 id="emptyTitle">这里还空着</h3>
+          <p id="emptyTip" class="muted"></p>
+        </section>
+        </section>
+      </div>
+  </main>
+
+  <!-- AI 提议抽屉 -->
+  <div class="drawer hidden" id="aiDrawer">
+    <header class="bar">
+      <div class="left">
+        <h2>AI 提议 · <span id="aiBatchMeta"></span></h2>
+      </div>
+      <div class="right">
+        <button id="aiAcceptAll">全部接受</button>
+        <button id="aiRejectAll">全部拒绝</button>
+        <button id="aiClose" class="ghost">关闭</button>
+      </div>
+    </header>
+    <section class="aiList" id="aiList"></section>
+    <footer class="aiFoot">
+      <button id="aiApply" class="primary">应用所选决定</button>
+      <span class="muted small" id="aiProgress"></span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="../lib/util.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>X Bookmark Organizer</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>X 书签整理</h1>
+    <button id="openOptions" class="ghost" title="打开管理页">⚙</button>
+  </header>
+
+  <section class="stats" id="stats">
+    <div class="stat"><span class="num" id="statTotal">—</span><span class="label">总数</span></div>
+    <div class="stat"><span class="num" id="statUncat">—</span><span class="label">未分类</span></div>
+    <div class="stat"><span class="num" id="statCats">—</span><span class="label">分类</span></div>
+    <div class="stat"><span class="num" id="statPending">—</span><span class="label">AI 待审</span></div>
+    <div class="stat"><span class="num" id="statHistory">—</span><span class="label">浏览</span></div>
+  </section>
+
+  <section class="cats" id="catList">
+    <div class="muted small">暂无分类。打开选项页创建吧。</div>
+  </section>
+
+  <section class="historyMini">
+    <span>浏览记录仅保存在本地</span>
+    <button id="openHistory" class="ghost">查看</button>
+  </section>
+
+  <section class="syncBox">
+    <div class="syncButtons">
+      <button id="fullSync" class="primary">完整同步全部书签</button>
+      <button id="stopSync" class="hidden">停止</button>
+    </div>
+    <div id="syncProgress" class="muted small">打开已登录的 x.com 后开始，不需要输入密码。</div>
+  </section>
+
+  <section class="actions">
+    <button id="scanNow">扫描当前可见页</button>
+    <button id="aiRun">✨ AI 整理未分类</button>
+  </section>
+
+  <section class="manualAdd">
+    <details>
+      <summary>手动补录一条推文</summary>
+      <div class="row">
+        <input id="manualUrl" type="url" placeholder="https://x.com/xxx/status/123…" />
+        <button id="manualAdd" class="primary">添加</button>
+      </div>
+      <p class="muted small">用于：x.com/i/bookmarks 没列出来、推文被删、或你想从别处补一条进来。</p>
+    </details>
+  </section>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
