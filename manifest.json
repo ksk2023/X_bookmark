@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Bookmark Organizer",
-  "version": "0.6.12",
+  "version": "0.6.13",
   "description": "同步和整理 X 书签，并在本地保存 X 浏览记录。",
   "permissions": [
     "storage",

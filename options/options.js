@@ -1646,6 +1646,30 @@ function renderHeatmapMonths(monthCols, totalWeeks) {
     return map[kind] || '页面';
   }
 
+  function historyKindIcon(kind) {
+    const map = {
+      tweet: '推',
+      profile: '人',
+      search: '#',
+      bookmarks: '书',
+      home: '首',
+      notifications: '通',
+      messages: '信',
+      explore: '探',
+      page: '页',
+    };
+    return map[kind] || '页';
+  }
+
+  function historyDisplayUrl(url) {
+    try {
+      const u = new URL(url);
+      return u.hostname.replace(/^www\./, '') + u.pathname + (u.search || '');
+    } catch (_e) {
+      return url || '';
+    }
+  }
+
   function formatCount(n) {
     n = Number(n) || 0;
     if (n >= 1e9) return (n / 1e9).toFixed(n % 1e9 >= 1e8 ? 1 : 0).replace(/\.0$/, '') + 'B';
@@ -1819,24 +1843,43 @@ function renderHeatmapMonths(monthCols, totalWeeks) {
     for (const h of arr) {
       const item = document.createElement('div');
       item.className = 'historyItem';
-      const who = h.author && (h.author.name || h.author.handle)
-        ? ' · ' + esc((h.author.name || '') + (h.author.handle ? ' @' + h.author.handle : ''))
-        : '';
+      const authorName = (h.author && h.author.name) || '';
+      const authorHandle = (h.author && h.author.handle) || '';
+      const kindName = historyKindName(h.kind);
+      const label = h.label || h.title || h.url || '';
+      const title = label || h.url || 'X 页面';
+      const subtitle = h.title && h.title !== label ? h.title : '';
+      const text = h.excerpt || subtitle || historyDisplayUrl(h.url);
+      const avatar = h.kind === 'tweet' && authorName ? authorName.charAt(0).toUpperCase() : historyKindIcon(h.kind);
       item.innerHTML =
         '<div class="body">' +
-          '<div class="titleLine">' + esc(h.label || h.title || h.url) + '</div>' +
-          '<div class="meta">' +
-            '<span>' + historyKindName(h.kind) + '</span>' +
-            '<span>访问 ' + (h.visitCount || 1) + ' 次</span>' +
-            '<span>最近 ' + fmtRel(h.lastSeenAt) + who + '</span>' +
+          '<div class="head">' +
+            '<span class="historyAvatar">' + esc(avatar) + '</span>' +
+            '<div class="authorInfo">' +
+              '<div class="authorRow">' +
+                '<span class="titleLine">' + esc(title) + '</span>' +
+                (authorHandle ? '<span class="handle">@' + esc(authorHandle) + '</span>' : '') +
+              '</div>' +
+              '<div class="cardTime">最近 ' + fmtRel(h.lastSeenAt) + (h.firstSeenAt ? ' · 首次 ' + fmtRel(h.firstSeenAt) : '') + '</div>' +
+            '</div>' +
           '</div>' +
-          (h.excerpt ? '<div class="excerpt">' + esc(h.excerpt) + '</div>' : '') +
-          '<div class="meta"><a target="_blank" rel="noreferrer" href="' + esc(h.url) + '">' + esc(h.url) + '</a></div>' +
+          '<div class="historyText collapsed">' + esc(text || '没有抓到页面摘要，点击打开原页面查看。') + '</div>' +
+          '<a class="historyUrl" target="_blank" rel="noreferrer" href="' + esc(h.url) + '">' + esc(historyDisplayUrl(h.url)) + '</a>' +
+          '<div class="tags">' +
+            '<span class="tag"><span class="dot"></span>' + esc(kindName) + '</span>' +
+            '<span class="tag">访问 ' + (h.visitCount || 1) + ' 次</span>' +
+            (authorName ? '<span class="tag">' + esc(authorName) + '</span>' : '') +
+          '</div>' +
         '</div>' +
         '<div class="actions">' +
           '<a class="openLink" target="_blank" rel="noreferrer" href="' + esc(h.url) + '">打开 ↗</a>' +
-          '<button data-act="deleteHistory" class="ghost">删除</button>' +
+          '<button data-act="deleteHistory" class="danger">删除</button>' +
         '</div>';
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('a, button, input, select, textarea')) return;
+        const textEl = item.querySelector('.historyText');
+        if (textEl) textEl.classList.toggle('collapsed');
+      });
       item.querySelector('[data-act="deleteHistory"]').addEventListener('click', async () => {
         const r = await send('xb/history/delete', { ids: [h.id] });
         if (r.ok) { toast('已删除记录'); await loadAll(); await refreshHistory(); }

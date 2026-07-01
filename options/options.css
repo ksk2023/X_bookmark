@@ -330,13 +330,29 @@ textarea { resize: vertical; min-height: 60px; width: 100%; }
 /* 浏览记录 */
 .historySettings { grid-column: 1 / -1; margin-bottom: 12px; }
 .historySettings .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.historyItem { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,0.82); box-shadow: var(--shadow-sm); }
-.historyItem:hover { border-color: var(--accent); }
-.historyItem .meta { display: flex; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 12px; margin-top: 4px; }
-.historyItem .titleLine { font-weight: 600; }
-.historyItem .excerpt { margin-top: 6px; color: var(--muted); white-space: pre-wrap; word-break: break-word; }
-.historyItem .actions { display: flex; gap: 6px; align-items: flex-start; }
-.historyItem a { color: var(--accent); text-decoration: none; }
+.historyItem { display: flex; flex-direction: column; gap: 8px; min-height: 220px; padding: 16px; border: 1px solid rgba(223,228,234,0.88); border-radius: 18px; background: rgba(255,255,255,0.82); box-shadow: var(--shadow-sm); transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+.historyItem:hover { border-color: rgba(230,57,70,0.7); box-shadow: var(--shadow); transform: translateY(-1px); }
+.historyItem .body { flex: 1; min-width: 0; }
+.historyItem .head { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.historyAvatar { width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(135deg, rgba(230,57,70,0.18), rgba(185,28,28,0.12)); border: 1px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--accent-hover); flex: none; }
+.historyItem .authorInfo { display: flex; flex-direction: column; min-width: 0; }
+.historyItem .authorRow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.historyItem .titleLine { font-weight: 650; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.historyItem .handle { color: var(--muted); font-size: 12px; }
+.historyItem .cardTime { color: var(--muted); font-size: 11px; }
+.historyText { margin-top: 10px; color: var(--fg); white-space: pre-wrap; word-break: break-word; line-height: 1.55; font-size: 14px; }
+.historyText.collapsed { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.historyUrl { display: block; margin-top: 8px; color: var(--accent); text-decoration: none; font-size: 12px; word-break: break-all; }
+.historyUrl:hover { color: var(--accent-hover); }
+.historyItem .tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.historyItem .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 12px; background: rgba(255,255,255,0.72); color: var(--muted); border: 1px solid var(--line); }
+.historyItem .tag .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.historyItem .actions { display: flex; gap: 2px; align-items: center; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--line); }
+.historyItem .openLink { color: var(--accent); text-decoration: none; font-size: 12px; }
+.historyItem .actions button { font-size: 12px; padding: 3px 8px; border-radius: 4px; border: 1px solid transparent; background: transparent; color: var(--muted); }
+.historyItem .actions button:hover { background: var(--accent-soft); color: var(--accent-hover); }
+.historyItem .actions button.danger { color: var(--warn); }
+.historyItem .actions button.danger:hover { background: rgba(244,33,46,0.08); }
 
 /* AI 设置 */
 .settings { grid-column: 1 / -1; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,0.82); box-shadow: var(--shadow-sm); }
